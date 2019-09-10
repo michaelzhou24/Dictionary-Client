@@ -11,8 +11,8 @@ ME/US except the parts that have been properly acknowledged in the
 assignment and below. In addition, we indicate that we are fully aware
 of the rules and consequences of plagiarism, as set forth by the
 Department of Computer Science and the University of British
-Columbia. In addition we understand that making this code available
-for others to view, either now and in the future is academic
+Columbia. Furthermore, we understand that making this code available
+for others to view, either now and or in the future is academic
 misconduct. Penalties for academic misconduct can, and have been
 applied retroactively and, in some instances, this has resulted in the
 revocation of one's degree.
