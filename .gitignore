@@ -1,3 +1,5 @@
+.idea
+.vscode
 # C development
 c/http_client
 
