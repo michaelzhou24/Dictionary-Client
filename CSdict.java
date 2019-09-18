@@ -26,6 +26,14 @@ public class CSdict {
     private static String[] arguments;
 
     public static void main(String [] args) {
+        Socket socket = null;
+        PrintWriter out = null;
+        BufferedReader in = null, stdIn = null;
+        String dictServer = "*";
+        String hostName = "test.dict.org";
+        int portNumber = 2628;
+
+
         byte cmdString[] = new byte[MAX_LEN];
         int len;
         // Verify command line arguments
@@ -49,7 +57,6 @@ public class CSdict {
             try {
                 System.out.print("csdict> ");
                 System.in.read(cmdString);
-
                 // Convert the command string to ASII
                 String inputString = new String(cmdString, "ASCII");
 
@@ -67,32 +74,16 @@ public class CSdict {
                     System.out.println("    " + arguments[i]);
                 }
                 switch (command) {
-                    case "open":
+                    case "open": {
                         // >open SERVER PORT
                         if (len != 2)
                             System.out.println("901 Incorrect number of arguments");
 
-                        try (
-                                Socket kkSocket = new Socket("test.dict.org", 2628);
-                                PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
-                                BufferedReader in = new BufferedReader(
-                                        new InputStreamReader(kkSocket.getInputStream()));
-                        ) {
-                            BufferedReader stdIn =
-                                    new BufferedReader(new InputStreamReader(System.in));
-                            String fromUser;
-                            String fromServer;
-                            fromUser = stdIn.readLine();
-                            if (fromUser != null) {
-                                System.out.println("Client: " + fromUser);
-                                out.println(fromUser);
-                                System.out.println("Server:");
-                                while ((fromServer = in.readLine()) != null && !fromServer.equals(".")) {
-                                    System.out.println(fromServer);
-                                }
-                            }
+                        try {
+                            socket = new Socket(hostName, portNumber);
+                            out = new PrintWriter(socket.getOutputStream(), true);
+                            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-                            
                         } catch (UnknownHostException e) {
                             System.err.println("Don't know about host");
                             System.exit(1);
@@ -100,42 +91,70 @@ public class CSdict {
                             System.err.println("Couldn't get I/O for the connection to");
                             System.exit(1);
                         }
-
                         break;
-                    case "dict":
+                    }
+                    case "dict": {
                         // >dict
                         if (len != 0)
                             System.out.println("901 Incorrect number of arguments");
+                        stdIn = new BufferedReader(new InputStreamReader(System.in));
+                        String cmd = "SHOW DB";
+                        String fromServer;
+                        out.println(cmd);
+                        while ((fromServer = in.readLine()) != null && !fromServer.equals(".")) {
+                            System.out.println(fromServer);
+                        }
                         break;
-                    case "set":
+                    }
+                    case "set": {
                         // >set DICTIONARY
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
+                        dictServer = arguments[0];
                         break;
-                    case "define":
+                    }
+                    case "define": {
                         // >define WORD
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
+                        stdIn = new BufferedReader(new InputStreamReader(System.in));
+                        String cmd = "DEFINE " + dictServer + " "+ arguments[0];
+                        System.out.println(cmd);
+                        String fromServer;
+                        out.println(cmd);
+                        while ((fromServer = in.readLine()) !=null && !fromServer.startsWith("250 ok")) {
+                            System.out.println(fromServer);
+                        }
                         break;
-                    case "match":
+                    }
+                    case "match": {
                         // >match WORD
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
                         break;
-                    case "prefixmatch":
+                    }
+                    case "prefixmatch": {
                         // prefixmatch WORD
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
                         break;
-                    case "close":
+                    }
+                    case "close": {
                         if (len != 0)
                             System.out.println("901 Incorrect number of arguments");
+                        if (socket != null)
+                            socket.close();
+                        socket = null;
+                        in = null;
+                        out = null;
                         break;
-                    case "quit":
+                    }
+                    case "quit": {
                         if (len != 0)
                             System.out.println("901 Incorrect number of arguments");
                         System.exit(0);
                         break;
+                    }
                     default:
                         System.out.println("900 Invalid Command");
                 }
