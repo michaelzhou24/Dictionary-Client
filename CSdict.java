@@ -6,9 +6,9 @@
 // use this template or hav all or your classes in this file.
 
 import java.lang.System;
-import java.util.Arrays;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 
 //
 // This is an implementation of a simplified version of a command
@@ -45,7 +45,7 @@ public class CSdict {
 
 
         // Example code to read command line input and extract arguments.
-        while(true) {
+        while (true) {
             try {
                 System.out.print("csdict> ");
                 System.in.read(cmdString);
@@ -71,25 +71,34 @@ public class CSdict {
                         // >open SERVER PORT
                         if (len != 2)
                             System.out.println("901 Incorrect number of arguments");
-                        try {
-                            client = new Socket("test.dict.org", 2628);
-                            String sentence;
-                            String modifiedSentence;
-                            BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-                            DataOutputStream outToServer = new DataOutputStream(client.getOutputStream());
-                            BufferedReader inFromServer = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
-                            sentence = "";
-                            outToServer.writeBytes(sentence + 'n');
-                            modifiedSentence = inFromServer.readLine();
-                            System.out.println("FROM SERVER: " + modifiedSentence);
-                            sentence = "HELP";
-                            outToServer.writeBytes(sentence + 'n');
-                            modifiedSentence = inFromServer.readLine();
-                            System.out.println("FROM SERVER: " + modifiedSentence);
-                            client.close();
+                        try (
+                                Socket kkSocket = new Socket("test.dict.org", 2628);
+                                PrintWriter out = new PrintWriter(kkSocket.getOutputStream(), true);
+                                BufferedReader in = new BufferedReader(
+                                        new InputStreamReader(kkSocket.getInputStream()));
+                        ) {
+                            BufferedReader stdIn =
+                                    new BufferedReader(new InputStreamReader(System.in));
+                            String fromUser;
+                            String fromServer;
+                            fromUser = stdIn.readLine();
+                            if (fromUser != null) {
+                                System.out.println("Client: " + fromUser);
+                                out.println(fromUser);
+                                System.out.println("Server:");
+                                while ((fromServer = in.readLine()) != null && !fromServer.equals(".")) {
+                                    System.out.println(fromServer);
+                                }
+                            }
+
+                            
+                        } catch (UnknownHostException e) {
+                            System.err.println("Don't know about host");
+                            System.exit(1);
                         } catch (IOException e) {
-                            System.out.println("920 Control connection to xxx on port yyy failed to open");
+                            System.err.println("Couldn't get I/O for the connection to");
+                            System.exit(1);
                         }
 
                         break;
