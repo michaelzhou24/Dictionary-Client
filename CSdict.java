@@ -78,7 +78,7 @@ public class CSdict {
                             System.out.println("901 Incorrect number of arguments");
                             // break; 
                         }
-                        if (socket.isConnected() || isOpen) {
+                        if (isOpen) {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
