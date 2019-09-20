@@ -30,9 +30,7 @@ public class CSdict {
         PrintWriter out = null;
         BufferedReader in = null, stdIn = null;
         String dictServer = "*";
-        String hostName = "test.dict.org";
-        int portNumber = 2628;
-
+        boolean isOpen = false;
 
         byte cmdString[] = new byte[MAX_LEN];
         int len;
@@ -76,9 +74,20 @@ public class CSdict {
                 switch (command) {
                     case "open": {
                         // >open SERVER PORT
-                        if (len != 2)
+                        if (len != 2) {
                             System.out.println("901 Incorrect number of arguments");
-
+                            // break; 
+                        }
+                        if (socket.isConnected() || isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
+//                        String hostName = arguments[0];
+//                        int portNumber = Integer.parseInt(arguments[1]);
+                        String hostName = "test.dict.org";
+                        int portNumber = 2628;
+                        System.out.println("open "+hostName+" "+portNumber);
+                        dictServer = "*";
                         try {
                             socket = new Socket(hostName, portNumber);
                             out = new PrintWriter(socket.getOutputStream(), true);
@@ -91,23 +100,38 @@ public class CSdict {
                             System.err.println("Couldn't get I/O for the connection to");
                             System.exit(1);
                         }
+                        isOpen = true;
                         break;
                     }
                     case "dict": {
                         // >dict
+                        if (!isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
                         if (len != 0)
                             System.out.println("901 Incorrect number of arguments");
-                        stdIn = new BufferedReader(new InputStreamReader(System.in));
-                        String cmd = "SHOW DB";
-                        String fromServer;
-                        out.println(cmd);
-                        while ((fromServer = in.readLine()) != null && !fromServer.equals(".")) {
-                            System.out.println(fromServer);
+                        try {
+                            stdIn = new BufferedReader(new InputStreamReader(System.in));
+                            String cmd = "SHOW DB";
+                            String fromServer;
+                            out.println(cmd);
+                            while ((fromServer = in.readLine()) != null && !fromServer.equals(".")) {
+                                if (!fromServer.startsWith("220"))
+                                    continue;
+                                System.out.println(fromServer);
+                            }
+                        } catch (Exception e) {
+                            System.err.println("NullPointerException thrown! Check connection to server..");
                         }
                         break;
                     }
                     case "set": {
                         // >set DICTIONARY
+                        if (!isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
                         dictServer = arguments[0];
@@ -115,6 +139,10 @@ public class CSdict {
                     }
                     case "define": {
                         // >define WORD
+                        if (!isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
                         stdIn = new BufferedReader(new InputStreamReader(System.in));
@@ -122,24 +150,44 @@ public class CSdict {
                         System.out.println(cmd);
                         String fromServer;
                         out.println(cmd);
-                        while ((fromServer = in.readLine()) !=null && !fromServer.startsWith("250 ok")) {
+                        while ((fromServer = in.readLine()) != null) {
+                            if (fromServer.startsWith("250 ok"))
+                                break;
+                            if (fromServer.startsWith("220")) // Suppress connection message
+                                continue;
+                            if (fromServer.startsWith("552 no match")) {
+                                System.out.println("*** No definition found! ***");
+                                break;
+                            }
                             System.out.println(fromServer);
                         }
                         break;
                     }
                     case "match": {
                         // >match WORD
+                        if (!isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
                         break;
                     }
                     case "prefixmatch": {
                         // prefixmatch WORD
+                        if (!isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
                         break;
                     }
                     case "close": {
+                        if (!isOpen) {
+                            System.out.println("903 Supplied command not expected at this time.");
+                            break;
+                        }
                         if (len != 0)
                             System.out.println("901 Incorrect number of arguments");
                         if (socket != null)
@@ -147,6 +195,7 @@ public class CSdict {
                         socket = null;
                         in = null;
                         out = null;
+                        isOpen = false;
                         break;
                     }
                     case "quit": {
@@ -159,13 +208,15 @@ public class CSdict {
                         System.out.println("900 Invalid Command");
                 }
                 System.out.println("Done.");
-
-
-
+                arguments = null;
+                command = "";
+                cmdString = new byte[MAX_LEN];
+                inputs = null;
             } catch (IOException exception) {
                 System.err.println("998 Input error while reading commands, terminating.");
                 System.exit(-1);
             }
+            
         }
     }
 }
