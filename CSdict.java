@@ -163,13 +163,14 @@ public class CSdict {
                             }
                             if (fromServer.startsWith("250 ok")) 
                                 break;
-                            if (fromServer.startsWith("220")) // Suppress connection message
+                            if (fromServer.startsWith("220") && !debugOn) // Suppress status message
                                 continue;
                             if (fromServer.startsWith("552 no match")) {
                                 System.out.println("*** No definition found! ***");
                                 break;
                             }
                             System.out.println(fromServer);
+                            // TODO: No matches found
                         }
                         break;
                     }
@@ -181,6 +182,25 @@ public class CSdict {
                         }
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
+                        String cmd = "MATCH " + dictServer+" prefix "+ arguments[0];
+                        String fromServer;
+                        out.println(cmd);
+                        while ((fromServer = in.readLine()) != null) {
+                            if (fromServer.startsWith("151")) {
+                                System.out.println("@" +
+                                    fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
+                                continue;
+                            }
+                            if (fromServer.startsWith("250 ok")) 
+                                break;
+                            if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
+                                continue;
+                            if (fromServer.startsWith("552")) {
+                                System.out.println("*****No matching word(s) found*****");
+                                break;
+                            }
+                            System.out.println(fromServer);
+                        }
                         break;
                     }
                     case "prefixmatch": {
@@ -191,6 +211,25 @@ public class CSdict {
                         }
                         if (len != 1)
                             System.out.println("901 Incorrect number of arguments");
+                        String cmd = "MATCH " + dictServer+" prefix "+ arguments[0];
+                        String fromServer;
+                        out.println(cmd);
+                        while ((fromServer = in.readLine()) != null) {
+                            if (fromServer.startsWith("151")) {
+                                System.out.println("@" +
+                                    fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
+                                continue;
+                            }
+                            if (fromServer.startsWith("250 ok")) 
+                                break;
+                            if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
+                                continue;
+                            if (fromServer.startsWith("552")) {
+                                System.out.println("*****No matching word(s) found*****");
+                                break;
+                            }
+                            System.out.println(fromServer);
+                        }
                         break;
                     }
                     case "close": {
