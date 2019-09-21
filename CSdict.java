@@ -116,8 +116,12 @@ public class CSdict {
                             String cmd = "SHOW DB";
                             String fromServer;
                             out.println(cmd);
-                            while ((fromServer = in.readLine()) != null && !fromServer.equals(".")) {
-                                if (!fromServer.startsWith("220"))
+                            while ((fromServer = in.readLine()) != null) {
+                                if (fromServer.startsWith("250 ok"))
+                                    break;
+                                if (fromServer.startsWith("220"))
+                                    continue;
+                                if (fromServer.equals("."))
                                     continue;
                                 System.out.println(fromServer);
                             }
@@ -151,7 +155,13 @@ public class CSdict {
                         String fromServer;
                         out.println(cmd);
                         while ((fromServer = in.readLine()) != null) {
-                            if (fromServer.startsWith("250 ok"))
+                            // format @ easton "Easton's ...."
+                            if (fromServer.startsWith("151")) {
+                                System.out.println("@" +
+                                    fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
+                                continue;
+                            }
+                            if (fromServer.startsWith("250 ok")) 
                                 break;
                             if (fromServer.startsWith("220")) // Suppress connection message
                                 continue;
