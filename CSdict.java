@@ -17,6 +17,7 @@ import java.util.*;
 //
 
 
+@SuppressWarnings("DuplicateBranchesInSwitch")
 public class CSdict {
     static final int MAX_LEN = 255;
     static Boolean debugOn = false;
@@ -48,8 +49,6 @@ public class CSdict {
             System.out.println("996 Too many command line options - Only -d is allowed");
             return;
         }
-
-
         // Example code to read command line input and extract arguments.
         while (true) {
             try {
@@ -109,8 +108,10 @@ public class CSdict {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
-                        if (len != 0)
+                        if (len != 0) {
                             System.out.println("901 Incorrect number of arguments");
+                            break;
+                        }
                         try {
                             stdIn = new BufferedReader(new InputStreamReader(System.in));
                             String cmd = "SHOW DB";
@@ -136,8 +137,10 @@ public class CSdict {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
-                        if (len != 1)
+                        if (len != 1) {
                             System.out.println("901 Incorrect number of arguments");
+                            break;
+                        }
                         dictServer = arguments[0];
                         break;
                     }
@@ -147,13 +150,16 @@ public class CSdict {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
-                        if (len != 1)
+                        if (len != 1) {
                             System.out.println("901 Incorrect number of arguments");
+                            break;
+                        }
                         stdIn = new BufferedReader(new InputStreamReader(System.in));
                         String cmd = "DEFINE " + dictServer + " "+ arguments[0];
                         System.out.println(cmd);
                         String fromServer;
                         out.println(cmd);
+                        boolean nodef = false;
                         while ((fromServer = in.readLine()) != null) {
                             // format @ easton "Easton's ...."
                             if (fromServer.startsWith("151")) {
@@ -165,12 +171,20 @@ public class CSdict {
                                 break;
                             if (fromServer.startsWith("220") && !debugOn) // Suppress status message
                                 continue;
-                            if (fromServer.startsWith("552 no match")) {
+                            if (fromServer.startsWith("552 no match") && !nodef) {
                                 System.out.println("*** No definition found! ***");
+                                cmd = "DEFINE * "+ arguments[0];
+                                nodef = true;
+                                System.out.println(cmd);
+                                out.println(cmd);
+                                if (!debugOn)
+                                    continue;
+                            }
+                            if (fromServer.startsWith("552 no match") && nodef) {
+                                System.out.println("*** No matches found! ***");
                                 break;
                             }
                             System.out.println(fromServer);
-                            // TODO: No matches found
                         }
                         break;
                     }
@@ -180,8 +194,10 @@ public class CSdict {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
-                        if (len != 1)
+                        if (len != 1) {
                             System.out.println("901 Incorrect number of arguments");
+                            break;
+                        }
                         String cmd = "MATCH " + dictServer+" prefix "+ arguments[0];
                         String fromServer;
                         out.println(cmd);
@@ -209,8 +225,10 @@ public class CSdict {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
-                        if (len != 1)
+                        if (len != 1) {
                             System.out.println("901 Incorrect number of arguments");
+                            break;
+                        }
                         String cmd = "MATCH " + dictServer+" prefix "+ arguments[0];
                         String fromServer;
                         out.println(cmd);
@@ -258,6 +276,7 @@ public class CSdict {
                 }
                 System.out.println("Done.");
                 arguments = null;
+                len = 0;
                 command = "";
                 cmdString = new byte[MAX_LEN];
                 inputs = null;
