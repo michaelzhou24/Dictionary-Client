@@ -70,21 +70,29 @@ public class CSdict {
                 for (int i = 0; i < len; i++) {
                     System.out.println("    " + arguments[i]);
                 }
+                if (command.startsWith("#")) {
+                    arguments = null;
+                    len = 0;
+                    command = "";
+                    cmdString = new byte[MAX_LEN];
+                    inputs = null;
+                    continue;
+                }
                 switch (command) {
                     case "open": {
                         // >open SERVER PORT
-                        if (len != 2) {
-                            System.out.println("901 Incorrect number of arguments");
-                            // break; 
-                        }
                         if (isOpen) {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
                         }
-//                        String hostName = arguments[0];
-//                        int portNumber = Integer.parseInt(arguments[1]);
-                        String hostName = "test.dict.org";
-                        int portNumber = 2628;
+                        if (len != 2) {
+                            System.out.println("901 Incorrect number of arguments");
+                            break;
+                        }
+
+                        String hostName = arguments[0];
+                        int portNumber = Integer.parseInt(arguments[1]);
+
                         System.out.println("open "+hostName+" "+portNumber);
                         dictServer = "*";
                         try {
@@ -162,6 +170,10 @@ public class CSdict {
                         boolean nodef = false;
                         while ((fromServer = in.readLine()) != null) {
                             // format @ easton "Easton's ...."
+                            if (fromServer.startsWith("550 invalid database")) {
+                                System.out.println("999 Processing error. Specified dictionary server not found.");
+                                break;
+                            }
                             if (fromServer.startsWith("151")) {
                                 System.out.println("@" +
                                     fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
