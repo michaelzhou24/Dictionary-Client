@@ -89,23 +89,18 @@ public class CSdict {
                             System.out.println("901 Incorrect number of arguments");
                             break;
                         }
-
                         String hostName = arguments[0];
                         int portNumber = Integer.parseInt(arguments[1]);
 
                         System.out.println("open "+hostName+" "+portNumber);
                         dictServer = "*";
                         try {
-                            socket = new Socket(hostName, portNumber);
+                            socket = new Socket();
+                            socket.connect(new InetSocketAddress(hostName, portNumber), 30000);
                             out = new PrintWriter(socket.getOutputStream(), true);
                             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-                        } catch (UnknownHostException e) {
-                            System.err.println("Don't know about host");
-                            System.exit(1);
-                        } catch (IOException e) {
-                            System.err.println("Couldn't get I/O for the connection to");
-                            System.exit(1);
+                        } catch (Exception e) {
+                            System.err.println("920 Control connection to "+hostName+" on port "+portNumber+" failed to open.");
                         }
                         isOpen = true;
                         break;
