@@ -96,13 +96,13 @@ public class CSdict {
                         dictServer = "*";
                         try {
                             socket = new Socket();
-                            socket.connect(new InetSocketAddress(hostName, portNumber), 30000);
+                            socket.connect(new InetSocketAddress(hostName, portNumber), 10000); // timeout after 10s
                             out = new PrintWriter(socket.getOutputStream(), true);
                             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                            isOpen = true;
                         } catch (Exception e) {
                             System.err.println("920 Control connection to "+hostName+" on port "+portNumber+" failed to open.");
                         }
-                        isOpen = true;
                         break;
                     }
                     case "dict": {
