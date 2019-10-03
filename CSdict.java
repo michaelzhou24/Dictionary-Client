@@ -131,6 +131,13 @@ public class CSdict {
                             }
                         } catch (Exception e) {
                             System.err.println("NullPointerException thrown! Check connection to server..");
+                            System.err.println("925 Control connection I/O error, closing control connection.");
+                            if (socket != null)
+                                socket.close();
+                            socket = null;
+                            in = null;
+                            out = null;
+                            isOpen = false;
                         }
                         break;
                     }
@@ -163,35 +170,45 @@ public class CSdict {
                         String fromServer;
                         out.println(cmd);
                         boolean nodef = false;
-                        while ((fromServer = in.readLine()) != null) {
-                            // format @ easton "Easton's ...."
-                            if (fromServer.startsWith("550 invalid database")) {
-                                System.out.println("999 Processing error. Specified dictionary server not found.");
-                                break;
-                            }
-                            if (fromServer.startsWith("151")) {
-                                System.out.println("@" +
-                                    fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
-                                continue;
-                            }
-                            if (fromServer.startsWith("250 ok")) 
-                                break;
-                            if (fromServer.startsWith("220") && !debugOn) // Suppress status message
-                                continue;
-                            if (fromServer.startsWith("552 no match") && !nodef) {
-                                System.out.println("*** No definition found! ***");
-                                cmd = "DEFINE * "+ arguments[0];
-                                nodef = true;
-                                System.out.println(cmd);
-                                out.println(cmd);
-                                if (!debugOn)
+                        try {
+                            while ((fromServer = in.readLine()) != null) {
+                                // format @ easton "Easton's ...."
+                                if (fromServer.startsWith("550 invalid database")) {
+                                    System.out.println("999 Processing error. Specified dictionary server not found.");
+                                    break;
+                                }
+                                if (fromServer.startsWith("151")) {
+                                    System.out.println("@" +
+                                            fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
                                     continue;
+                                }
+                                if (fromServer.startsWith("250 ok"))
+                                    break;
+                                if (fromServer.startsWith("220") && !debugOn) // Suppress status message
+                                    continue;
+                                if (fromServer.startsWith("552 no match") && !nodef) {
+                                    System.out.println("*** No definition found! ***");
+                                    cmd = "DEFINE * "+ arguments[0];
+                                    nodef = true;
+                                    System.out.println(cmd);
+                                    out.println(cmd);
+                                    if (!debugOn)
+                                        continue;
+                                }
+                                if (fromServer.startsWith("552 no match") && nodef) {
+                                    System.out.println("*** No matches found! ***");
+                                    break;
+                                }
+                                System.out.println(fromServer);
                             }
-                            if (fromServer.startsWith("552 no match") && nodef) {
-                                System.out.println("*** No matches found! ***");
-                                break;
-                            }
-                            System.out.println(fromServer);
+                        } catch (Exception e) {
+                            System.err.println("925 Control connection I/O error, closing control connection.");
+                            if (socket != null)
+                                socket.close();
+                            socket = null;
+                            in = null;
+                            out = null;
+                            isOpen = false;
                         }
                         break;
                     }
@@ -208,21 +225,31 @@ public class CSdict {
                         String cmd = "MATCH " + dictServer+" prefix "+ arguments[0];
                         String fromServer;
                         out.println(cmd);
-                        while ((fromServer = in.readLine()) != null) {
-                            if (fromServer.startsWith("151")) {
-                                System.out.println("@" +
-                                    fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
-                                continue;
+                        try {
+                            while ((fromServer = in.readLine()) != null) {
+                                if (fromServer.startsWith("151")) {
+                                    System.out.println("@" +
+                                            fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
+                                    continue;
+                                }
+                                if (fromServer.startsWith("250 ok"))
+                                    break;
+                                if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
+                                    continue;
+                                if (fromServer.startsWith("552")) {
+                                    System.out.println("*****No matching word(s) found*****");
+                                    break;
+                                }
+                                System.out.println(fromServer);
                             }
-                            if (fromServer.startsWith("250 ok")) 
-                                break;
-                            if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
-                                continue;
-                            if (fromServer.startsWith("552")) {
-                                System.out.println("*****No matching word(s) found*****");
-                                break;
-                            }
-                            System.out.println(fromServer);
+                        } catch (Exception e) {
+                            System.err.println("925 Control connection I/O error, closing control connection.");
+                            if (socket != null)
+                                socket.close();
+                            socket = null;
+                            in = null;
+                            out = null;
+                            isOpen = false;
                         }
                         break;
                     }
@@ -239,21 +266,31 @@ public class CSdict {
                         String cmd = "MATCH " + dictServer+" prefix "+ arguments[0];
                         String fromServer;
                         out.println(cmd);
-                        while ((fromServer = in.readLine()) != null) {
-                            if (fromServer.startsWith("151")) {
-                                System.out.println("@" +
-                                    fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
-                                continue;
+                        try {
+                            while ((fromServer = in.readLine()) != null) {
+                                if (fromServer.startsWith("151")) {
+                                    System.out.println("@" +
+                                        fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
+                                    continue;
+                                }
+                                if (fromServer.startsWith("250 ok"))
+                                    break;
+                                if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
+                                    continue;
+                                if (fromServer.startsWith("552")) {
+                                    System.out.println("*****No matching word(s) found*****");
+                                    break;
+                                }
+                                System.out.println(fromServer);
                             }
-                            if (fromServer.startsWith("250 ok")) 
-                                break;
-                            if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
-                                continue;
-                            if (fromServer.startsWith("552")) {
-                                System.out.println("*****No matching word(s) found*****");
-                                break;
-                            }
-                            System.out.println(fromServer);
+                        } catch (Exception e) {
+                            System.err.println("925 Control connection I/O error, closing control connection.");
+                            if (socket != null)
+                                socket.close();
+                            socket = null;
+                            in = null;
+                            out = null;
+                            isOpen = false;
                         }
                         break;
                     }
