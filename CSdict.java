@@ -16,8 +16,6 @@ import java.util.*;
 // -d which turns on debugging output.
 //
 
-
-@SuppressWarnings("DuplicateBranchesInSwitch")
 public class CSdict {
     static final int MAX_LEN = 255;
     static Boolean debugOn = false;
@@ -89,8 +87,15 @@ public class CSdict {
                             System.out.println("901 Incorrect number of arguments");
                             break;
                         }
+
+                        int portNumber;
+                        try {
+                            portNumber = Integer.parseInt(arguments[1]);
+                        } catch (NumberFormatException e) {
+                            System.out.println("902 Invalid argument.");
+                            break;
+                        }
                         String hostName = arguments[0];
-                        int portNumber = Integer.parseInt(arguments[1]);
 
                         System.out.println("open "+hostName+" "+portNumber);
                         dictServer = "*";
