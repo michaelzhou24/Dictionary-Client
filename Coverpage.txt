@@ -28,15 +28,8 @@ information to this file and then commit and push this file.
 
 
 STUDENT  1
-Name :
-St. No:
-Unix Id :
-Email:
-
-
-STUDENT  2
-Name :
-St. No:
-Unix Id :
-Email:
+Name : Michael Zhou
+St. No: 28262905
+Unix Id : p8m1b
+Email: mzhou24@students.cs.ubc.ca
 
