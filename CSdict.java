@@ -246,7 +246,7 @@ public class CSdict {
                                 }
                                 if (fromServer.startsWith("250 ok")) {
                                     if (debugOn)
-                                        System.out.println("<--"+fromServer);
+                                        System.out.println("<-- "+fromServer);
                                     break;
                                 }
 
@@ -305,7 +305,7 @@ public class CSdict {
                                 }
                                 if (fromServer.startsWith("250 ok")) {
                                     if (debugOn)
-                                        System.out.println("<--"+fromServer);
+                                        System.out.println("<-- "+fromServer);
                                     break;
                                 }
                                 if ((fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
@@ -362,7 +362,7 @@ public class CSdict {
                                 }
                                 if (fromServer.startsWith("250 ok")) {
                                     if (debugOn)
-                                        System.out.println(fromServer);
+                                        System.out.println("<-- "+fromServer);
                                     break;
                                 }
                                 if ((fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn) // Suppress status message
