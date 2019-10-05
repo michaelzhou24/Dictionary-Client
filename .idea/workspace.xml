@@ -14,11 +14,6 @@
   <component name="DefaultGradleProjectSettings">
     <option name="isMigrated" value="true" />
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>925</find>
-    </findStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -33,7 +28,7 @@
     <property name="node.js.path.for.package.tslint" value="project" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
-    <property name="settings.editor.selected.configurable" value="MTCustomThemeConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -70,7 +65,11 @@
       <workItem from="1570139565257" duration="630000" />
       <workItem from="1570140454619" duration="143000" />
       <workItem from="1570140636056" duration="1841000" />
-      <workItem from="1570209772134" duration="729000" />
+      <workItem from="1570209772134" duration="1388000" />
+      <workItem from="1570219825074" duration="1368000" />
+      <workItem from="1570233467787" duration="2230000" />
+      <workItem from="1570236070976" duration="31000" />
+      <workItem from="1570249555329" duration="4448000" />
     </task>
     <servers />
   </component>
