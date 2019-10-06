@@ -79,6 +79,7 @@ public class CSdict {
                 switch (command) {
                     case "open": {
                         // >open SERVER PORT
+                        // check command validity
                         if (isOpen) {
                             System.out.println("903 Supplied command not expected at this time.");
                             break;
@@ -89,17 +90,22 @@ public class CSdict {
                         }
 
                         int portNumber;
+                        // Check if valid port number (Integer)
                         try {
                             portNumber = Integer.parseInt(arguments[1]);
+                            if (portNumber < 0)
+                                throw new NumberFormatException();
                         } catch (NumberFormatException e) {
                             System.out.println("902 Invalid argument.");
                             break;
                         }
                         String hostName = arguments[0];
+                        // Not sure how to check if hostname is proper, hostname could be IPv4 or hostname
 
                         //System.out.println("open "+hostName+" "+portNumber);
                         dictServer = "*";
                         try {
+                            // Open the socket
                             socket = new Socket();
                             socket.connect(new InetSocketAddress(hostName, portNumber), 10000); // timeout after 10s
                             out = new PrintWriter(socket.getOutputStream(), true);
@@ -127,6 +133,7 @@ public class CSdict {
                             if (debugOn) 
                                 System.out.println("--> "+cmd);
                             out.println(cmd);
+                            // Process output - filter out status codes and errors
                             while ((fromServer = in.readLine()) != null) {
                                 if (fromServer.startsWith("250 ok")) {
                                     if (debugOn)
@@ -170,6 +177,7 @@ public class CSdict {
                             break;
                         }
                         dictServer = arguments[0];
+                        // set the variable to the argument 
                         break;
                     }
                     case "define": {
@@ -191,6 +199,7 @@ public class CSdict {
 
                         boolean nodef = false;
                         try {
+                            // process output
                             while ((fromServer = in.readLine()) != null) {
                                 // format @ easton "Easton's ...."
                                 if (fromServer.startsWith("550 invalid database")) {
@@ -219,7 +228,6 @@ public class CSdict {
                                         System.out.println("<-- "+fromServer);
                                     break;
                                 }
-                                // TODO
 
                                 if (fromServer.startsWith("552 no match") && !nodef) {
                                     System.out.println("*** No definition found! ***");
@@ -233,6 +241,7 @@ public class CSdict {
                                 }
                                 System.out.println(fromServer);
                             }
+                        // if no matches found, search all databases
                         if (nodef) {
                             cmd = "MATCH * exact "+ arguments[0];
                             if (debugOn)
@@ -294,6 +303,7 @@ public class CSdict {
                         if (debugOn)
                             System.out.println("--> "+cmd);
                         out.println(cmd);
+                        // Same output processing as prefixmatch
                         try {
                             while ((fromServer = in.readLine()) != null) {
                                 if (fromServer.startsWith("151")) {
@@ -418,6 +428,7 @@ public class CSdict {
                         System.out.println("900 Invalid Command");
                 }
                 //System.out.println("Done.");
+                // Reset input array
                 arguments = null;
                 len = 0;
                 command = "";
