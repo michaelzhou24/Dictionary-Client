@@ -408,7 +408,23 @@ public class CSdict {
                         }
                         if (len != 0)
                             System.out.println("901 Incorrect number of arguments");
-
+                        String cmd = "QUIT";
+                        String fromServer;
+                        if (debugOn)
+                            System.out.println("--> "+cmd);
+                        out.println(cmd);
+                        // Same output processing as prefixmatch
+                        try {
+                            while ((fromServer = in.readLine()) != null) {
+                                if (fromServer.startsWith("221 bye")) {
+                                    if (debugOn)
+                                        System.out.println("<-- "+fromServer);
+                                    break;
+                                }
+                            }
+                        } catch (Exception e) {
+                            System.err.println("925 Control connection I/O error, closing control connection.");
+                        }
                         socket.close();
                         socket = null;
                         in = null;
