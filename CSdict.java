@@ -259,9 +259,9 @@ public class CSdict {
                                     break;
                                 }
 
-                                if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn)  // Suppress status message
+                                if ((fromServer.startsWith("152") || fromServer.startsWith("220")) && !debugOn)  // Suppress status message
                                     continue;
-                                if ((fromServer.equals(".") || fromServer.startsWith("152") || fromServer.startsWith("220")) && debugOn) {
+                                if ((fromServer.startsWith("152") || fromServer.startsWith("220")) && debugOn) {
                                     // Suppress status message
                                     System.out.println("<-- "+fromServer);
                                     continue;
