@@ -104,11 +104,16 @@ public class CSdict {
                         dictServer = "*";
                         try {
                             // Open the socket
+                            String fromServer;
                             socket = new Socket();
                             socket.connect(new InetSocketAddress(hostName, portNumber), 10000); // timeout after 10s
                             out = new PrintWriter(socket.getOutputStream(), true);
                             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                             isOpen = true;
+                            if ((fromServer = in.readLine()) != null) {
+                                if (debugOn)
+                                    System.out.println("<-- "+fromServer);
+                            }
                         } catch (IllegalArgumentException e) {
                             System.out.println("902 Invalid argument.");
                         } catch (Exception e) {
@@ -202,6 +207,7 @@ public class CSdict {
                             // process output
                             while ((fromServer = in.readLine()) != null) {
                                 // format @ easton "Easton's ...."
+                                // Process status messages
                                 if (fromServer.startsWith("550")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
@@ -221,14 +227,11 @@ public class CSdict {
                                     System.out.println("<-- "+fromServer);
                                     continue;
                                 }
-
-
                                 if (fromServer.startsWith("250")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
                                 }
-
                                 if (fromServer.startsWith("552") && !nodef) {
                                     System.out.println("*** No definition found! ***");
                                     //cmd = "MATCH * exact "+ arguments[0];
