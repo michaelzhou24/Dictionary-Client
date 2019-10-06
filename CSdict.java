@@ -93,8 +93,6 @@ public class CSdict {
                         // Check if valid port number (Integer)
                         try {
                             portNumber = Integer.parseInt(arguments[1]);
-                            if (portNumber < 0)
-                                throw new NumberFormatException();
                         } catch (NumberFormatException e) {
                             System.out.println("902 Invalid argument.");
                             break;
@@ -111,6 +109,8 @@ public class CSdict {
                             out = new PrintWriter(socket.getOutputStream(), true);
                             in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                             isOpen = true;
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("902 Invalid argument.");
                         } catch (Exception e) {
                             System.err.println("920 Control connection to "+hostName+" on port "+portNumber+" failed to open.");
                         }
