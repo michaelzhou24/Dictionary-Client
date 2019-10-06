@@ -135,7 +135,7 @@ public class CSdict {
                             out.println(cmd);
                             // Process output - filter out status codes and errors
                             while ((fromServer = in.readLine()) != null) {
-                                if (fromServer.startsWith("250 ok")) {
+                                if (fromServer.startsWith("250")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
@@ -202,7 +202,7 @@ public class CSdict {
                             // process output
                             while ((fromServer = in.readLine()) != null) {
                                 // format @ easton "Easton's ...."
-                                if (fromServer.startsWith("550 invalid database")) {
+                                if (fromServer.startsWith("550")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     System.out.println("999 Processing error. Specified dictionary server not found.");
@@ -223,13 +223,13 @@ public class CSdict {
                                 }
 
 
-                                if (fromServer.startsWith("250 ok")) {
+                                if (fromServer.startsWith("250")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
                                 }
 
-                                if (fromServer.startsWith("552 no match") && !nodef) {
+                                if (fromServer.startsWith("552") && !nodef) {
                                     System.out.println("*** No definition found! ***");
                                     //cmd = "MATCH * exact "+ arguments[0];
                                     nodef = true;
@@ -253,7 +253,7 @@ public class CSdict {
                                             fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
                                     continue;
                                 }
-                                if (fromServer.startsWith("250 ok")) {
+                                if (fromServer.startsWith("250")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
@@ -313,7 +313,7 @@ public class CSdict {
                                             fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
                                     continue;
                                 }
-                                if (fromServer.startsWith("250 ok")) {
+                                if (fromServer.startsWith("250")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
@@ -370,7 +370,7 @@ public class CSdict {
                                         fromServer.substring(fromServer.indexOf(" ", fromServer.indexOf(" ") + 1), fromServer.length()));
                                     continue;
                                 }
-                                if (fromServer.startsWith("250 ok")) {
+                                if (fromServer.startsWith("250")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
@@ -416,7 +416,7 @@ public class CSdict {
                         // Same output processing as prefixmatch
                         try {
                             while ((fromServer = in.readLine()) != null) {
-                                if (fromServer.startsWith("221 bye")) {
+                                if (fromServer.startsWith("221")) {
                                     if (debugOn)
                                         System.out.println("<-- "+fromServer);
                                     break;
