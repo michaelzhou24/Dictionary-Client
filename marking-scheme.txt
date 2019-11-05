@@ -1,1 +1,23 @@
-Replace with the proper scheme
+Total before late penalty: [80/88]
+You can check file commandline_outputs.txt for the full output from the autoexpect tests.
+You can also refer to rubric at Canvas for more details.
+Automatically graded points: 62 / 66
+Criteria || Pts || Comments quit || 4 / 4 || 
+set || 4 / 4 || 
+make || 2 / 2 || 
+prefixmatch || 6 / 6 || 
+parse || 3 / 3 || 
+dict || 4 / 4 || 
+error || 12 / 14 || cmd-d quit not handled -2pts
+close || 4 / 4 || 
+open || 5 / 5 || 
+match || 6 / 6 || 
+define || 12 / 14 || Cannot print matches when no defs are there, -2 pts, 
+This part is graded manually: 18 / 22
+
+Criteria || Pts || Comments-d option || 6 / 6 || 
+handling of error 925 || 0 / 2 || needs to catch IOExceptions only
+documentation || 3 / 3 || 
+other || 5 / 5 || 
+quality || 2 / 3 || overly long method
+readability || 2 / 3 || 
